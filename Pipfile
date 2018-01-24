@@ -10,6 +10,8 @@ django = "*"
 gunicorn = "*"
 django-heroku = "*"
 openpyxl = "*"
+djangorestframework = "*"
+xlrd = "*"
 
 
 [requires]

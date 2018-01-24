@@ -1,10 +1,10 @@
-from django.urls import re_path
+from django.urls import path, re_path, include
 
 from django.contrib import admin
-from acoustic.API.views import TestView
+from acoustic.API.views import GenerateReport
 admin.autodiscover()
 
 urlpatterns = [
     re_path('^admin/?', admin.site.urls),
-    re_path('^api/?', TestView.as_view())
+    path('api/', include('acoustic.API.urls'))
 ]
