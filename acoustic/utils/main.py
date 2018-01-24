@@ -35,14 +35,14 @@ class Calculation:
     def run_calculation(self):
         self.transposed_values = transpose_matrix(self.values)
         self.average_values = [round(x) for x in self.calculate_average_values()]
-        self.log()
+        # self.log()
         if self.calculate_deltas(self.evaluation_curve) == CORRECTION_PARAMETER:
             pass
         elif self.calculate_deltas(self.evaluation_curve) > CORRECTION_PARAMETER:
             self.decrease_evaluation_curve()
         else:
             self.increase_evaluation_curve()
-        self.log()
+        # self.log()
 
     def calculate_average_values(self):
         normalized_matrix = [get_exponents(x) for x in self.transposed_values]

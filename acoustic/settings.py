@@ -122,4 +122,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join('media')
+MEDIA_URL = '/media/'
+
 django_heroku.settings(locals())
