@@ -1,5 +1,7 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views import View
+from django.conf import settings
+from os import path
 
 from acoustic.utils.extractor import get_values_from_excel
 from acoustic.utils.main import Calculation
@@ -24,3 +26,14 @@ class GenerateReport(View):
         filename = generate_report(results.json)
 
         return HttpResponse(content=filename, content_type='application/json')
+
+
+class DownloadReport(View):
+    def get(self, request, *args, **kwargs):
+        file_path = path.join(settings.MEDIA_ROOT, kwargs['filename'])
+        if path.exists(file_path):
+            with open(file_path, 'rb') as f:
+                response = HttpResponse(f.read(), content_type="application/vnd.ms-excel")
+                response['Content-Disposition'] = 'inline; filename=' + path.basename(file_path)
+                return response
+        raise Http404
