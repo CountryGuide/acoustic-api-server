@@ -3,6 +3,7 @@ from django.views import View
 
 from acoustic.utils.extractor import get_values_from_excel
 from acoustic.utils.main import Calculation
+from acoustic.utils.report_generator import generate_report
 
 
 class BaseAPIView(View):
@@ -20,5 +21,6 @@ class GenerateReport(View):
         file = request.FILES.get('data').read()
         data = get_values_from_excel(file)
         results = Calculation(data, reverberation_time, volume)
+        filename = generate_report(results.json)
 
-        return HttpResponse(content=results.json, content_type='application/json')
+        return HttpResponse(content=filename, content_type='application/json')

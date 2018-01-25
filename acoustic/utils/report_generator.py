@@ -1,3 +1,5 @@
+import json
+
 from os import path
 from datetime import datetime
 from random import randint
@@ -6,10 +8,11 @@ from django.conf import settings
 from openpyxl import Workbook
 from openpyxl.styles import Alignment
 
-from .main import FREQUENCIES, EVALUATION_CURVE as INITIAL_EVALUATION_CURVE
+from .main import FREQUENCIES
 
 
 def generate_report(options):
+    data = json.loads(options)
     ac = Alignment(horizontal="center", vertical="center")
 
     wb = Workbook()
@@ -40,18 +43,18 @@ def generate_report(options):
 
     for i in range(16):
         ws_rep.cell(row=5, column=(2 + i), value=FREQUENCIES[i])
-        ws_rep.cell(row=6, column=(2 + i), value=options['logarithms'][i])
-        ws_rep.cell(row=7, column=(2 + i), value=options['reverberation_times'][i])
-        ws_rep.cell(row=8, column=(2 + i), value=options['frequency_response'][i])
-        ws_rep.cell(row=9, column=(2 + i), value=INITIAL_EVALUATION_CURVE[i])
-        ws_rep.cell(row=10, column=(2 + i), value=options['initial_deltas'][i])
-        ws_rep.cell(row=14, column=(2 + i), value=options['results']['evaluation_curve'][i])
-        ws_rep.cell(row=15, column=(2 + i), value=options['results']['deltas'][i])
+        ws_rep.cell(row=6, column=(2 + i), value=data['average'][i])
+        ws_rep.cell(row=7, column=(2 + i), value=data['reverberation-time'][i])
+        ws_rep.cell(row=8, column=(2 + i), value=data['reduced'][i])
+        ws_rep.cell(row=9, column=(2 + i), value=data['evaluation_curve'][i])
+        ws_rep.cell(row=10, column=(2 + i), value=data['initial_deltas'][i])
+        ws_rep.cell(row=14, column=(2 + i), value=data['reduced_evaluation_curve'][i])
+        ws_rep.cell(row=15, column=(2 + i), value=data['deltas'][i])
 
-    ws_rep['B11'] = options['initial_deltas_sum']
-    ws_rep['B12'] = options['results']['evaluation_curve'][7] - INITIAL_EVALUATION_CURVE[7]
-    ws_rep['B16'] = options['results']['deltas_sum']
-    ws_rep['B17'] = options['results']['evaluation_curve'][7]
+    ws_rep['B11'] = data['initial_deltas_sum']
+    ws_rep['B12'] = data['dB_difference']
+    ws_rep['B16'] = data['deltas_sum']
+    ws_rep['B17'] = data['reduced_noise_index']
 
     now = str(datetime.date(datetime.now()))
     salt = str(randint(1000, 9999))
@@ -60,4 +63,4 @@ def generate_report(options):
 
     wb.save(file_path)
 
-    return file_name
+    return json.dumps({'path': file_name})

@@ -14,12 +14,13 @@ FREQUENCIES = [100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 160
 
 class Calculation:
     frequencies = FREQUENCIES
-    values = []
-    transposed_values = []
-    average_values = []
-    deltas = []
-    evaluation_curve = []
     reverberation_time = []
+    transposed_values = []
+    evaluation_curve = []
+    average_values = []
+    reduced_values = []
+    values = []
+    deltas = []
     volume = 0
     calculations_quantity = 0
 
@@ -34,11 +35,11 @@ class Calculation:
 
     def run_calculation(self):
         self.transposed_values = transpose_matrix(self.values)
-        self.average_values = [round(x) for x in self.calculate_average_values()]
+        self.reduced_values = [round(x) for x in self.calculate_average_values()]
         # self.log()
-        if self.calculate_deltas(self.evaluation_curve) == CORRECTION_PARAMETER:
+        if sum(self.calculate_deltas(self.evaluation_curve)) == CORRECTION_PARAMETER:
             pass
-        elif self.calculate_deltas(self.evaluation_curve) < CORRECTION_PARAMETER:
+        elif sum(self.calculate_deltas(self.evaluation_curve)) < CORRECTION_PARAMETER:
             self.decrease_evaluation_curve()
         else:
             self.increase_evaluation_curve()
@@ -48,39 +49,52 @@ class Calculation:
         normalized_matrix = [get_exponents(x) for x in self.transposed_values]
         normalized_rt = get_fond_of_sound_absorption(self.reverberation_time, self.volume)
         reduced_values = [get_logarithm(x, self.calculations_quantity) for x in normalized_matrix]
+        self.average_values = list(reduced_values)
         return get_frequency_response(reduced_values, normalized_rt)
 
     def calculate_deltas(self, curve):
-        self.deltas = filter_negative_results(get_deltas(self.average_values, curve))
-        return sum([round(x) for x in self.deltas])
+        self.deltas = filter_negative_results(get_deltas(self.reduced_values, curve))
+        return [round(x) for x in self.deltas]
+
+    def calculate_deltas_for_report(self, curve):
+        self.deltas = get_deltas(self.reduced_values, curve)
+        return [round(x) if x < 0 else '' for x in self.deltas]
 
     def increase_evaluation_curve(self):
         curve = self.evaluation_curve[:]
-        while self.calculate_deltas(curve) >= CORRECTION_PARAMETER:
+        while sum(self.calculate_deltas(curve)) >= CORRECTION_PARAMETER:
             self.evaluation_curve = curve
-            if self.calculate_deltas(curve) >= CORRECTION_PARAMETER:
+            if sum(self.calculate_deltas(curve)) >= CORRECTION_PARAMETER:
                 curve = [x + 1 for x in curve]
 
     def decrease_evaluation_curve(self):
         curve = list(self.evaluation_curve)
-        while self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
-            if self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
+        while sum(self.calculate_deltas(curve)) <= CORRECTION_PARAMETER:
+            if sum(self.calculate_deltas(curve)) <= CORRECTION_PARAMETER:
                 curve = [x - 1 for x in curve]
                 self.evaluation_curve = curve
 
     def log(self):
         print('{0}\n{1}\n{2}\n{3}'.format(
-            self.calculate_deltas(self.evaluation_curve),
+            sum(self.calculate_deltas(self.evaluation_curve)),
             self.evaluation_curve,
-            self.average_values,
+            self.reduced_values,
             self.deltas
         ))
 
     @property
     def json(self):
         result = {
-            'deltas': self.calculate_deltas(self.evaluation_curve),
-            'evc': self.evaluation_curve,
-            'average values': self.average_values
+            'average': [round(x) for x in self.average_values],
+            'reverberation-time': [round(x, 2) for x in self.reverberation_time],
+            'reduced': self.reduced_values,
+            'evaluation_curve': EVALUATION_CURVE,
+            'initial_deltas': self.calculate_deltas_for_report(EVALUATION_CURVE),
+            'initial_deltas_sum': sum(self.calculate_deltas(EVALUATION_CURVE)),
+            'dB_difference': self.evaluation_curve[0] - EVALUATION_CURVE[0],
+            'reduced_evaluation_curve': self.evaluation_curve,
+            'deltas': self.calculate_deltas_for_report(self.evaluation_curve),
+            'deltas_sum': sum(self.calculate_deltas(self.evaluation_curve)),
+            'reduced_noise_index': self.evaluation_curve[7]
         }
         return json.dumps(result)
