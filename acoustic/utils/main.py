@@ -38,7 +38,7 @@ class Calculation:
         # self.log()
         if self.calculate_deltas(self.evaluation_curve) == CORRECTION_PARAMETER:
             pass
-        elif self.calculate_deltas(self.evaluation_curve) > CORRECTION_PARAMETER:
+        elif self.calculate_deltas(self.evaluation_curve) < CORRECTION_PARAMETER:
             self.decrease_evaluation_curve()
         else:
             self.increase_evaluation_curve()
@@ -51,22 +51,22 @@ class Calculation:
         return get_frequency_response(reduced_values, normalized_rt)
 
     def calculate_deltas(self, curve):
-        self.deltas = filter_negative_results(get_deltas(curve, self.average_values))
+        self.deltas = filter_negative_results(get_deltas(self.average_values, curve))
         return sum([round(x) for x in self.deltas])
 
     def increase_evaluation_curve(self):
         curve = self.evaluation_curve[:]
-        while self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
-            if self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
-                curve = [x + 1 for x in curve]
-                self.evaluation_curve = curve
-
-    def decrease_evaluation_curve(self):
-        curve = list(self.evaluation_curve)
         while self.calculate_deltas(curve) >= CORRECTION_PARAMETER:
             self.evaluation_curve = curve
             if self.calculate_deltas(curve) >= CORRECTION_PARAMETER:
+                curve = [x + 1 for x in curve]
+
+    def decrease_evaluation_curve(self):
+        curve = list(self.evaluation_curve)
+        while self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
+            if self.calculate_deltas(curve) <= CORRECTION_PARAMETER:
                 curve = [x - 1 for x in curve]
+                self.evaluation_curve = curve
 
     def log(self):
         print('{0}\n{1}\n{2}\n{3}'.format(
