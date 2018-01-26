@@ -12,6 +12,7 @@ django-heroku = "*"
 openpyxl = "*"
 djangorestframework = "*"
 xlrd = "*"
+django-cors-headers = "*"
 
 
 [requires]
