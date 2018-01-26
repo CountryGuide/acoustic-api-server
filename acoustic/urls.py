@@ -6,5 +6,5 @@ admin.autodiscover()
 
 urlpatterns = [
     re_path('^admin/?', admin.site.urls),
-    path('api/', include('acoustic.API.urls'))
+    path('', include('acoustic.API.urls'))
 ]
