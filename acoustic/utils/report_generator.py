@@ -1,4 +1,5 @@
 import json
+import string
 
 from os import path
 from datetime import datetime
@@ -6,7 +7,7 @@ from random import randint
 from django.conf import settings
 
 from openpyxl import Workbook
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, Border, Side
 
 from .main import FREQUENCIES
 
@@ -14,6 +15,13 @@ from .main import FREQUENCIES
 def generate_report(options):
     data = json.loads(options)
     ac = Alignment(horizontal="center", vertical="center")
+    ar = Alignment(horizontal="right", vertical="center", indent=1, wrap_text=True)
+    border_lr = Border(left=Side(style='thin'),
+                       right=Side(style='thin'))
+    border_t = Border(top=Side(style='thin'))
+    border_b = Border(bottom=Side(style='thin'))
+    border_r = Border(right=Side(style='thin'))
+    border_l = Border(left=Side(style='thin'))
 
     wb = Workbook()
     ws_calc = wb.active
@@ -55,6 +63,31 @@ def generate_report(options):
     ws_rep['B12'] = data['dB_difference']
     ws_rep['B16'] = data['deltas_sum']
     ws_rep['B17'] = data['reduced_noise_index']
+
+    ws_rep['A4'].alignment = ac
+    ws_rep['A1'].alignment = ac
+    ws_rep['A2'].alignment = ac
+
+    for i in range(15):
+        for j in range(16):
+            ws_rep.cell(row=(3 + i), column=(2 + j)).alignment = ac
+
+    for i in range(13):
+        ws_rep.cell(row=(5 + i), column=1).alignment = ar
+
+    for i in range(15):
+        ws_rep.cell(row=(4 + i), column=1).border = border_lr
+        ws_rep.cell(row=(4 + i), column=17).border = border_r
+
+    for i in range(17):
+        ws_rep.cell(row=4, column=(i + 1)).border = border_t
+        ws_rep.cell(row=5, column=(i + 1)).border = border_b
+        ws_rep.cell(row=17, column=(i + 1)).border = border_b
+
+    ws_rep.column_dimensions['A'].width = 56.43
+
+    for i in string.ascii_uppercase[1:17]:
+        ws_rep.column_dimensions[i].width = 8
 
     now = str(datetime.date(datetime.now()))
     salt = str(randint(1000, 9999))
