@@ -18,15 +18,23 @@ def generate_report(options):
     ar = Alignment(horizontal="right", vertical="center", indent=1, wrap_text=True)
     border_lr = Border(left=Side(style='thin'),
                        right=Side(style='thin'))
-    border_t = Border(top=Side(style='thin'))
+    border_tlr = Border(top=Side(style='thin'),
+                        left=Side(style='thin'),
+                        right=Side(style='thin'))
+    border_tr = Border(top=Side(style='thin'),
+                       right=Side(style='thin'))
+    border_br = Border(bottom=Side(style='thin'),
+                       right=Side(style='thin'))
+    border_blr = Border(bottom=Side(style='thin'),
+                        left=Side(style='thin'),
+                        right=Side(style='thin'))
     border_b = Border(bottom=Side(style='thin'))
     border_r = Border(right=Side(style='thin'))
-    border_l = Border(left=Side(style='thin'))
+    border_t = Border(top=Side(style='thin'))
 
     wb = Workbook()
-    ws_calc = wb.active
-    ws_calc.title = 'Calculations'
-    ws_rep = wb.create_sheet('Report')
+    ws_rep = wb.active
+    ws_rep.title = 'Report'
 
     ws_rep['A1'] = 'Report generated at:'
     ws_rep['A2'] = datetime.now()
@@ -75,14 +83,21 @@ def generate_report(options):
     for i in range(13):
         ws_rep.cell(row=(5 + i), column=1).alignment = ar
 
-    for i in range(15):
-        ws_rep.cell(row=(4 + i), column=1).border = border_lr
-        ws_rep.cell(row=(4 + i), column=17).border = border_r
+    ws_rep['A4'].border = border_tlr
+    ws_rep['A5'].border = border_blr
+    ws_rep['A17'].border = border_blr
+    ws_rep['Q4'].border = border_tr
+    ws_rep['Q5'].border = border_br
+    ws_rep['Q17'].border = border_br
 
-    for i in range(17):
-        ws_rep.cell(row=4, column=(i + 1)).border = border_t
-        ws_rep.cell(row=5, column=(i + 1)).border = border_b
-        ws_rep.cell(row=17, column=(i + 1)).border = border_b
+    for i in range(11):
+        ws_rep.cell(row=(6 + i), column=1).border = border_lr
+        ws_rep.cell(row=(6 + i), column=17).border = border_r
+
+    for i in range(15):
+        ws_rep.cell(row=4, column=(i + 2)).border = border_t
+        ws_rep.cell(row=5, column=(i + 2)).border = border_b
+        ws_rep.cell(row=17, column=(i + 2)).border = border_b
 
     ws_rep.column_dimensions['A'].width = 56.43
 
