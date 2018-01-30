@@ -9,7 +9,7 @@ from django.conf import settings
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Side
 
-from .main import FREQUENCIES
+from .noise_calculation import FREQUENCIES
 
 
 def generate_report(options):

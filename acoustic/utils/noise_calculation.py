@@ -12,7 +12,7 @@ CORRECTION_PARAMETER = -32
 FREQUENCIES = [100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600, 2000, 2500, 3150]
 
 
-class Calculation:
+class NoiseCalculation:
     frequencies = FREQUENCIES
     reverberation_time = []
     transposed_values = []
