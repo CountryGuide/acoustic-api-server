@@ -1,6 +1,8 @@
 import json
 
-from .functions import *
+from acoustic.utils.functions import \
+    transpose_matrix, get_exponents, get_fond_of_sound_absorption,\
+    get_logarithm, get_frequency_response, filter_negative_results, get_deltas
 
 # оценочная кривая
 EVALUATION_CURVE = [62, 62, 62, 62, 62, 62, 61, 60, 59, 58, 57, 54, 51, 48, 45, 42]

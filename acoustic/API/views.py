@@ -30,8 +30,7 @@ class GenerateReport(View):
         if air_mode:
             air_noise_source = request.FILES.get('air_noise').read()
             air_noise_data = get_values_from_excel(air_noise_source)
-            print(air_noise_data)
-            results = AirNoiseCalculation(data, reverberation_time, volume)
+            results = AirNoiseCalculation(data, air_noise_data, reverberation_time, volume)
         else:
             results = NoiseCalculation(data, reverberation_time, volume)
         filename = generate_report(results.json)
