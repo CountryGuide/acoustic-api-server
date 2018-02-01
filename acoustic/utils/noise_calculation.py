@@ -27,15 +27,15 @@ class NoiseCalculation:
     calculations_quantity = 0
 
     def __init__(self, matrix, reverberation_time, volume):
-        print('Created new calculation')
+        print('Created new NoiseCalculation')
         self.values = matrix
         self.reverberation_time = reverberation_time
         self.evaluation_curve = EVALUATION_CURVE
         self.volume = volume
         self.calculations_quantity = len(self.values)
-        self.run_calculation()
 
     def run_calculation(self):
+        self.log()
         self.transposed_values = transpose_matrix(self.values)
         self.reduced_values = [round(x) for x in self.calculate_average_values()]
         if sum(self.calculate_deltas(self.evaluation_curve)) == CORRECTION_PARAMETER:
@@ -44,6 +44,7 @@ class NoiseCalculation:
             self.decrease_evaluation_curve()
         else:
             self.increase_evaluation_curve()
+        self.log()
 
     def calculate_average_values(self):
         normalized_matrix = [get_exponents(x) for x in self.transposed_values]

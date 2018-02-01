@@ -32,7 +32,8 @@ class GenerateReport(View):
             air_noise_data = get_values_from_excel(air_noise_source)
             results = AirNoiseCalculation(data, air_noise_data, reverberation_time, volume)
         else:
-            results = NoiseCalculation(data, reverberation_time, volume)
+            results = NoiseCalculation(data, reverberation_time, volume).run_calculation()
+        results.run_calculation()
         filename = generate_report(results.json)
 
         return HttpResponse(content=filename, content_type='application/json')

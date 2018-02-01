@@ -13,9 +13,10 @@ class AirNoiseCalculation(NoiseCalculation):
     average_air_noise_values = []
 
     def __init__(self, matrix, air_noise_matrix, reverberation_time, volume):
+        print('Created new AirNoiseCalculation')
+        super().__init__(matrix, reverberation_time, volume)
         self.air_noise_matrix = air_noise_matrix
         self.evaluation_curve = EVALUATION_CURVE
-        super().__init__(matrix, reverberation_time, volume)
 
     def calculate_average_values(self):
         self.transposed_air_noise_values = transpose_matrix(self.air_noise_matrix)
