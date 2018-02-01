@@ -4,9 +4,6 @@ from acoustic.utils.functions import \
     transpose_matrix, get_exponents, get_fond_of_sound_absorption,\
     get_logarithm, get_frequency_response, filter_negative_results, get_deltas
 
-# оценочная кривая
-EVALUATION_CURVE = [62, 62, 62, 62, 62, 62, 61, 60, 59, 58, 57, 54, 51, 48, 45, 42]
-
 # какой-то параметр калибровочный, не знаю как называется
 CORRECTION_PARAMETER = -32
 
@@ -16,6 +13,7 @@ FREQUENCIES = [100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 160
 
 class NoiseCalculation:
     frequencies = FREQUENCIES
+    base_evaluation_curve = [62, 62, 62, 62, 62, 62, 61, 60, 59, 58, 57, 54, 51, 48, 45, 42]
     reverberation_time = []
     transposed_values = []
     evaluation_curve = []
@@ -30,7 +28,7 @@ class NoiseCalculation:
         print('Created new NoiseCalculation')
         self.values = matrix
         self.reverberation_time = reverberation_time
-        self.evaluation_curve = EVALUATION_CURVE
+        self.evaluation_curve = list(self.base_evaluation_curve)
         self.volume = volume
         self.calculations_quantity = len(self.values)
 
@@ -89,10 +87,10 @@ class NoiseCalculation:
             'average': [round(x) for x in self.average_values],
             'reverberation-time': [round(x, 2) for x in self.reverberation_time],
             'reduced': self.reduced_values,
-            'evaluation_curve': EVALUATION_CURVE,
-            'initial_deltas': self.calculate_deltas_for_report(EVALUATION_CURVE),
-            'initial_deltas_sum': sum(self.calculate_deltas(EVALUATION_CURVE)),
-            'dB_difference': self.evaluation_curve[0] - EVALUATION_CURVE[0],
+            'evaluation_curve': self.base_evaluation_curve,
+            'initial_deltas': self.calculate_deltas_for_report(self.base_evaluation_curve),
+            'initial_deltas_sum': sum(self.calculate_deltas(self.base_evaluation_curve)),
+            'dB_difference': self.evaluation_curve[0] - self.base_evaluation_curve[0],
             'reduced_evaluation_curve': self.evaluation_curve,
             'deltas': self.calculate_deltas_for_report(self.evaluation_curve),
             'deltas_sum': sum(self.calculate_deltas(self.evaluation_curve)),

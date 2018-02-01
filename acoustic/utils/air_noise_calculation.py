@@ -4,10 +4,9 @@ from acoustic.utils.functions import \
     transpose_matrix, get_exponents, get_fond_of_sound_absorption,\
     get_logarithm, get_frequency_response
 
-EVALUATION_CURVE = [33,	36,	39,	42,	45,	48,	51,	52,	53,	54,	55,	56,	56,	56,	56,	56]
-
 
 class AirNoiseCalculation(NoiseCalculation):
+    base_evaluation_curve = [33, 36, 39, 42, 45, 48, 51, 52, 53, 54, 55, 56, 56, 56, 56, 56]
     air_noise_matrix = []
     transposed_air_noise_values = []
     average_air_noise_values = []
@@ -16,7 +15,6 @@ class AirNoiseCalculation(NoiseCalculation):
         print('Created new AirNoiseCalculation')
         super().__init__(matrix, reverberation_time, volume)
         self.air_noise_matrix = air_noise_matrix
-        self.evaluation_curve = EVALUATION_CURVE
 
     def calculate_average_values(self):
         self.transposed_air_noise_values = transpose_matrix(self.air_noise_matrix)

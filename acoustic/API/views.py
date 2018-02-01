@@ -1,4 +1,3 @@
-import json
 from distutils.util import strtobool
 
 from django.http import HttpResponse, Http404
@@ -13,12 +12,12 @@ from acoustic.utils.report_generator import generate_report
 
 
 class BaseAPIView(View):
-    def get(self, request):
+    def get(self):
         return HttpResponse('list of APIs')
 
 
 class GenerateReport(View):
-    def get(self, request):
+    def get(self):
         return HttpResponse('generate API')
 
     def post(self, request):
@@ -32,7 +31,7 @@ class GenerateReport(View):
             air_noise_data = get_values_from_excel(air_noise_source)
             results = AirNoiseCalculation(data, air_noise_data, reverberation_time, volume)
         else:
-            results = NoiseCalculation(data, reverberation_time, volume).run_calculation()
+            results = NoiseCalculation(data, reverberation_time, volume)
         results.run_calculation()
         filename = generate_report(results.json)
 
@@ -40,7 +39,7 @@ class GenerateReport(View):
 
 
 class DownloadReport(View):
-    def get(self, request, *args, **kwargs):
+    def get(self, **kwargs):
         file_path = path.join(settings.MEDIA_ROOT, kwargs['filename'])
         if path.exists(file_path):
             with open(file_path, 'rb') as f:
