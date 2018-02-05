@@ -28,7 +28,8 @@ SECRET_KEY = 'CHANGE_ME!!!! (P.S. the SECRET_KEY environment variable will be us
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'https://acoustic.herokuapp.com/'
+    'https://acoustic.herokuapp.com/',
+    'localhost:3000'
 ]
 
 
@@ -108,7 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 CORS_ORIGIN_WHITELIST = (
-    'https://acoustic.herokuapp.com/'
+    'https://acoustic.herokuapp.com/',
+    'localhost:3000'
 )
 
 # Internationalization
