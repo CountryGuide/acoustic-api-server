@@ -39,7 +39,7 @@ class GenerateReport(View):
 
 
 class DownloadReport(View):
-    def get(self, **kwargs):
+    def get(self, *args, **kwargs):
         file_path = path.join(settings.MEDIA_ROOT, kwargs['filename'])
         if path.exists(file_path):
             with open(file_path, 'rb') as f:
